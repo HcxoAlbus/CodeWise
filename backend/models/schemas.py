@@ -22,7 +22,7 @@ class CodeAnalysisRequest(BaseModel):
     analysis_type: AnalysisType = Field(..., description="分析类型")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "code": "def hello():\n    print('Hello, World!')",
                 "language": "python",
@@ -39,7 +39,7 @@ class CodeExplanationResponse(BaseModel):
     execution_time: float = Field(..., description="分析耗时（秒）")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "explanation": "这是一个简单的函数定义...",
                 "code_summary": "定义了一个打印问候语的函数",
@@ -57,7 +57,7 @@ class BugReport(BaseModel):
     suggestion: str = Field(..., description="修复建议")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "line_number": 5,
                 "description": "可能存在除零错误",
@@ -75,7 +75,7 @@ class StyleIssue(BaseModel):
     suggestion: str = Field(..., description="改进建议")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "line_number": 3,
                 "rule": "E302",
@@ -94,7 +94,7 @@ class OptimizationSuggestion(BaseModel):
     after_code: Optional[str] = Field(None, description="优化后代码")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "category": "性能优化",
                 "description": "使用列表推导式替代循环",
@@ -116,7 +116,7 @@ class CodeReviewResponse(BaseModel):
     lines_analyzed: int = Field(..., description="分析的代码行数")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "overall_score": 85,
                 "summary": "代码质量良好，有少量改进空间",
@@ -136,7 +136,7 @@ class ErrorResponse(BaseModel):
     timestamp: Optional[str] = Field(None, description="错误时间戳")
     
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "detail": "代码分析失败",
                 "error_code": "ANALYSIS_ERROR",

@@ -7,7 +7,18 @@
 import asyncio  # 导入异步IO库，用于异步操作
 import logging  # 导入日志库，用于记录日志信息
 from typing import Dict, List, Any  # 导入类型注解，用于类型提示
-from langchain.chains import LLMChain  # 导入LangChain的LLMChain，用于构建大模型链
+
+# 修复 LangChain 导入 - 使用兼容的导入方式
+try:
+    from langchain.chains import LLMChain  # 导入LangChain的LLMChain，用于构建大模型链
+except ImportError:
+    # 如果 LLMChain 导入失败，使用新版本的导入方式
+    try:
+        from langchain.chains.llm import LLMChain
+    except ImportError:
+        # 如果都失败，设置为 None，使用直接调用模式
+        LLMChain = None
+
 from langchain.prompts import PromptTemplate  # 导入提示模板，用于构建大模型输入模板
 from langchain_community.llms import Tongyi  # 导入通义千问模型的LangChain适配器
 
@@ -25,6 +36,7 @@ class CodeExplainerService:
         """初始化代码解释服务"""
         self.llm = None  # 初始化大模型对象为None
         self.explanation_chain = None  # 初始化解释链对象为None
+        self.use_direct_mode = False  # 是否使用直接调用模式
         self._init_llm()  # 调用内部方法初始化大模型和链
 
     def _init_llm(self):
@@ -38,24 +50,34 @@ class CodeExplainerService:
                 max_tokens=settings.max_tokens
             )
 
-            # 创建代码解释提示模板，指定输入变量和模板内容
-            prompt = PromptTemplate(
-                input_variables=["code", "language"],
-                template=CODE_EXPLANATION_PROMPT
-            )
+            # 如果 LLMChain 不可用，使用直接调用模式
+            if LLMChain is None:
+                logger.warning("LLMChain 不可用，使用直接调用模式")
+                self.explanation_chain = None
+                self.use_direct_mode = True
+            else:
+                # 创建代码解释提示模板，指定输入变量和模板内容
+                prompt = PromptTemplate(
+                    input_variables=["code", "language"],
+                    template=CODE_EXPLANATION_PROMPT
+                )
 
-            # 创建LLM链，绑定大模型和提示模板，设置是否输出详细日志
-            self.explanation_chain = LLMChain(
-                llm=self.llm,
-                prompt=prompt,
-                verbose=True if settings.debug else False
-            )
+                # 创建LLM链，绑定大模型和提示模板，设置是否输出详细日志
+                self.explanation_chain = LLMChain(
+                    llm=self.llm,
+                    prompt=prompt,
+                    verbose=True if settings.debug else False
+                )
+                self.use_direct_mode = False
 
             logger.info("代码解释服务初始化成功")  # 记录初始化成功日志
 
         except Exception as e:
             logger.error(f"代码解释服务初始化失败: {str(e)}")  # 记录初始化失败日志
-            raise  # 抛出异常
+            # 如果初始化失败，回退到直接调用模式
+            self.explanation_chain = None
+            self.use_direct_mode = True
+            logger.warning("回退到直接调用模式")
 
     async def explain_code(self, code: str, language: str = "python") -> Dict[str, Any]:
         """
@@ -71,14 +93,25 @@ class CodeExplainerService:
         try:
             logger.info(f"开始解释 {language} 代码")  # 记录开始解释日志
 
-            # 异步执行LLM链，避免阻塞主线程
-            response = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.explanation_chain.run(
-                    code=code,
-                    language=language
+            # 如果是直接调用模式
+            if self.use_direct_mode:
+                # 直接调用通义千问模型进行解释
+                response = await asyncio.get_event_loop().run_in_executor(
+                    None,
+                    lambda: self.llm(
+                        code=code,
+                        language=language
+                    )
                 )
-            )
+            else:
+                # 异步执行LLM链，避免阻塞主线程
+                response = await asyncio.get_event_loop().run_in_executor(
+                    None,
+                    lambda: self.explanation_chain.run(
+                        code=code,
+                        language=language
+                    )
+                )
 
             # 解析LLM响应，结构化输出
             result = self._parse_explanation_response(response)

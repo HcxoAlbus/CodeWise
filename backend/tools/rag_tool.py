@@ -8,8 +8,15 @@ import logging
 import os
 from typing import List, Dict, Any
 from langchain.tools import BaseTool
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+# 修复 LangChain 导入警告
+try:
+    from langchain_community.vectorstores import FAISS
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+except ImportError:
+    # 如果新版本导入失败，使用旧版本导入
+    from langchain.vectorstores import FAISS
+    from langchain.embeddings import HuggingFaceEmbeddings
+
 from langchain.schema import Document
 import numpy as np
 

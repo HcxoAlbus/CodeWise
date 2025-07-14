@@ -19,8 +19,6 @@ from contextlib import asynccontextmanager
 
 # 导入自定义的配置获取函数
 from config.settings import get_settings
-# 导入API路由对象
-from backend.api.routes import api_router
 # 导入日志配置函数
 from backend.core.logging_config import setup_logging
 
@@ -88,8 +86,14 @@ async def root():
         "health": "/health"
     }
 
-# 注册API路由，将所有业务接口挂载到/api/v1路径下
-app.include_router(api_router, prefix="/api/v1")
+# 延迟导入API路由，避免循环依赖
+def setup_routes():
+    """设置路由"""
+    from backend.api.routes import api_router
+    app.include_router(api_router, prefix="/api/v1")
+
+# 在应用启动时设置路由
+setup_routes()
 
 # 如果直接运行本文件，则启动开发服务器
 if __name__ == "__main__":

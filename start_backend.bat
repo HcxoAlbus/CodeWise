@@ -1,57 +1,69 @@
 @echo off
-chcp 65001 >nul
-echo 🚀 启动 CodeWise AI 后端服务...
+setlocal enabledelayedexpansion
+cd /d "%~dp0"
 
-REM 进入项目目录
-cd /d "d:\sec_semester_code\Industrial_Training\codewise-ai"
+echo Starting CodeWise AI Backend...
 
-@REM REM 检查虚拟环境
-@REM if not exist "venv\Scripts\activate.bat" (
-@REM     echo ❌ 虚拟环境不存在，正在创建...
-@REM     python -m venv venv
-@REM )
+REM Check if virtual environment exists
+if not exist "venv\Scripts\activate.bat" (
+    echo Virtual environment not found, creating...
+    python -m venv venv
+    if errorlevel 1 (
+        echo Failed to create virtual environment
+        pause
+        exit /b 1
+    )
+)
 
-@REM REM 激活虚拟环境
-@REM echo 🔧 激活虚拟环境...
-@REM call venv\Scripts\activate.bat
+REM Activate virtual environment
+echo Activating virtual environment...
+call venv\Scripts\activate.bat
+if errorlevel 1 (
+    echo Failed to activate virtual environment
+    pause
+    exit /b 1
+)
 
-@REM REM 检查Python版本
-@REM echo 📋 检查Python环境...
-@REM python --version
-@REM if errorlevel 1 (
-@REM     echo ❌ Python未正确安装或配置
-@REM     pause
-@REM     exit /b 1
-@REM )
+REM Check Python version
+echo Checking Python environment...
+python --version
+if errorlevel 1 (
+    echo Python not properly installed or configured
+    pause
+    exit /b 1
+)
 
-@REM REM 安装依赖
-@REM echo 📦 安装Python依赖...
-@REM pip install -r requirements.txt
-@REM if errorlevel 1 (
-@REM     echo ❌ 依赖安装失败
-@REM     pause
-@REM     exit /b 1
-@REM )
+REM Install dependencies
+echo Installing Python dependencies...
+pip install -r requirements.txt
+if errorlevel 1 (
+    echo Failed to install dependencies
+    pause
+    exit /b 1
+)
 
-REM 创建必要目录
-echo 📁 创建必要目录...
+REM Create necessary directories
+echo Creating necessary directories...
 if not exist "logs" mkdir logs
 if not exist "data\vector_db" mkdir data\vector_db
 if not exist "data\knowledge_base" mkdir data\knowledge_base
 
-REM 检查环境配置
+REM Check environment configuration
 if not exist ".env" (
-    echo ⚠️  .env文件不存在，复制示例配置...
+    echo .env file not found, copying example configuration...
     copy .env.example .env
-    echo 请编辑.env文件并配置您的API密钥
+    echo Please edit .env file and configure your API key
     pause
 )
 
-REM 启动后端服务
-echo 🎯 启动后端服务...
-echo 如果出现错误，请查看详细信息...
+REM Set Python path to include current directory
+set PYTHONPATH=%CD%;%PYTHONPATH%
+
+REM Start backend service
+echo Starting backend service...
+echo If errors occur, please check the detailed information...
 python backend/main.py
 
 echo.
-echo 按任意键退出...
+echo Press any key to exit...
 pause >nul
