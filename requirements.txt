@@ -1,0 +1,43 @@
+# CodeWise AI 项目 Python 依赖列表
+
+# 核心 AI 与大语言模型相关依赖
+langchain==0.1.0                # LangChain，构建基于大语言模型的应用框架
+langchain-community==0.0.10     # LangChain 社区扩展包，提供更多集成与工具
+openai==1.0.0                   # OpenAI 官方 SDK，用于调用 GPT 等模型
+dashscope==1.14.0               # 通义千问 API SDK，调用阿里云大模型服务
+
+# 后端 Web 框架相关依赖
+fastapi==0.104.1                # FastAPI，现代异步 Web 框架，构建 API 服务
+uvicorn[standard]==0.24.0       # Uvicorn，ASGI 服务器，运行 FastAPI 应用
+pydantic==2.5.0                 # Pydantic，数据校验与序列化，定义请求/响应模型
+pydantic-settings==2.1.0        # Pydantic Settings，用于管理应用配置和环境变量
+python-multipart==0.0.6         # 处理 multipart/form-data（如文件上传）的库
+
+# 向量数据库与文本嵌入相关依赖
+faiss-cpu==1.7.4                # Facebook FAISS，快速高效的向量相似度搜索库（CPU 版）
+chromadb==0.4.15                # Chroma，轻量级向量数据库，存储和检索嵌入向量
+sentence-transformers==2.2.2    # 句子级别文本嵌入模型，生成文本向量表示
+
+# 代码分析与格式化工具
+flake8==6.1.0                   # 代码风格检查工具，检测 Python 代码规范
+black==23.11.0                  # 代码自动格式化工具，统一代码风格
+isort==5.12.0                   # 自动排序 import 语句，保持导入顺序整洁
+pylint==3.0.3                   # 代码静态分析工具，发现潜在错误和代码异味
+
+# 数据处理相关依赖
+pandas==2.1.4                   # 数据分析与处理库，支持表格数据操作
+numpy==1.24.3                   # 数值计算库，支持高效数组运算
+
+# HTTP 请求与实用工具
+requests==2.31.0                # 发送 HTTP 请求的库，常用于调用外部 API
+python-dotenv==1.0.0            # 加载 .env 文件中的环境变量
+python-jose[cryptography]==3.3.0 # JOSE 实现，支持 JWT 等加密解密操作
+
+# 测试相关依赖
+pytest==7.4.3                   # Python 测试框架，编写和运行单元测试
+pytest-asyncio==0.21.1          # 支持异步测试的 pytest 插件
+httpx==0.25.2                   # 支持异步的 HTTP 客户端，用于测试和请求
+
+# 文档生成相关依赖
+mkdocs==1.5.3                   # MkDocs，静态文档生成工具，生成项目文档网站
+mkdocs-material==9.4.8          # MkDocs Material 主题，美化文档页面

@@ -1,0 +1,44 @@
+{
+  "name": "codewise-ai-frontend",
+  "version": "1.0.0",
+  "description": "CodeWise AI 前端界面 - 智能编程学习伙伴",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0",
+    "@monaco-editor/react": "^4.6.0",
+    "antd": "^5.12.0",
+    "react-router-dom": "^6.18.0",
+    "react-markdown": "^9.0.1",
+    "prismjs": "^1.29.0",
+    "styled-components": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@vitejs/plugin-react": "^4.1.1",
+    "vite": "^5.0.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react": "^7.33.2",
+    "prettier": "^3.1.0",
+    "typescript": "^5.2.2"
+  },
+  "keywords": [
+    "react",
+    "ai",
+    "code-analysis",
+    "programming",
+    "education"
+  ],
+  "author": "CodeWise AI Team",
+  "license": "MIT",
+  "type": "commonjs"
+}
